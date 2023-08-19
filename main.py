@@ -1,7 +1,6 @@
 import datetime
 import os
 import pickle
-import time
 
 import cv2
 import cvzone
@@ -12,7 +11,6 @@ from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import storage
 from datetime import datetime
-import sys
 
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {
@@ -95,7 +93,7 @@ while True:
                                                "%Y-%m-%d %H:%M:%S")
             secondsElapsed = (datetime.now() - datetimeObject).total_seconds()
             print(secondsElapsed)
-            if secondsElapsed > 30:
+            if secondsElapsed > 15:
                 ref = db.reference(f'Students/{id}')
                 studentInfo['total_attendance'] += 1
                 ref.child('total_attendance').set(studentInfo['total_attendance'])
@@ -107,7 +105,7 @@ while True:
 
         if modeType != 3:
 
-            if 10 < counter < 20:
+            if 10 < counter < 15:
                 modeType = 2
             imgBackground[44:44 + 633, 808:808 + 414] = imgModeList[modeType]
 
@@ -126,7 +124,7 @@ while True:
                 imgBackground[175:175 + 216, 909:909 + 216] = imgStudent
         counter += 1
 
-    if counter >= 20:
+    if counter >= 15:
         counter = 0
         modType = 0
         studentInfo = []
@@ -135,10 +133,8 @@ while True:
 
     # background merge
     cv2.imshow("Face Attendance", imgBackground)
-    cv2.waitKey(1)
-
-
-    def terminate(q):
-        if q.name == 'q':
-            print("program ended")
-            sys.exit()
+    key = cv2.waitKey(1)
+    if key == ord('q'):
+        break
+cap.release()
+cv2.destroyWindow()
